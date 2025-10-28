@@ -1,0 +1,38 @@
+# La Lanza (Despliegue Continuo)
+name: 🚀 CD - Despliegue a Producción
+
+# Disparador: Se ejecuta cuando se hace un 'push' (una fusión) a la rama 'main'
+on:
+  push:
+    branches: [ "main" ]
+
+# Permisos necesarios para que el robot pueda escribir en el repositorio (para desplegar)
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  # Tarea de despliegue
+  deploy:
+    name: Desplegar en GitHub Pages
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }} # La URL donde quedará el sitio
+
+    steps: # Pasos que ejecutará el robot
+      - name: 1. Clonar el repositorio
+        uses: actions/checkout@v4
+      
+      - name: 2. Configurar Pages (actions/configure-pages)
+        uses: actions/configure-pages@v5
+
+      - name: 3. Empaquetar artefacto (actions/upload-artifact)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.' # Empaqueta todo el contenido del repositorio
+
+      - name: 4. Desplegar (actions/deploy-pages)
+        id: deployment
+        uses: actions/deploy-pages@v4

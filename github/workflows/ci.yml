@@ -1,0 +1,30 @@
+# El Escudo (Integración Continua)
+name: 🛡️ CI - Verificador de Calidad
+
+# Disparador: Se ejecuta al crear o actualizar un Pull Request dirigido a la rama 'main'
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # Tarea de verificación de calidad
+  build:
+    name: Revisar Calidad del Código
+    runs-on: ubuntu-latest # Se ejecuta en un servidor virtual con Ubuntu
+    
+    steps: # Pasos que ejecutará el robot
+    - name: 1. Clonar el repositorio
+      uses: actions/checkout@v4 # Acción para descargar tu código
+
+    - name: 2. Validar HTML (html-linter)
+      uses: anmasri/html-validator-action@v1.2.0
+      with:
+        path: '.' # Revisa todos los archivos HTML en el repositorio
+        
+    - name: 3. Revisar enlaces rotos (check-links)
+      uses: ahmadnassri/action-check-links@v2
+      with:
+        path: index.html # Revisa los enlaces en el archivo index.html
+        
+    # Nota: El linter de accesibilidad (a11y) puede ser más complejo de configurar.
+    # Los dos pasos anteriores son una excelente demostración del concepto.
